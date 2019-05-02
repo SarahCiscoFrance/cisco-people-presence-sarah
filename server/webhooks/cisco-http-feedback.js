@@ -40,5 +40,14 @@ const register = codec => {
         console.log(response.data);
       }
     })
-    .catch(err => console.log("Error HTTP Feedback ---", codec.name));
+    .catch(err =>
+      console.log(
+        "Error HTTP Feedback ---",
+        codec.name,
+        "---",
+        err.message,
+        "---",
+        err.response.data
+      )
+    );
 };
