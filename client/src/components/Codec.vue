@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="container flex-grow direction-column"
-    v-if="codec"
-  >
+  <div class="container flex-grow direction-column" v-if="codec">
     <div class="container">
       <div
         class="container-half codec-details"
@@ -125,24 +122,29 @@ export default {
   methods: {
     daySelected(date) {
       this.date = date;
+
+      this.getCodecHistory();
+    },
+    getCodecHistory() {
+      const data = {
+        codecMacAddress: this.mac,
+        startDate: moment
+          .utc(this.date)
+          .startOf("week")
+          .toDate(),
+        endDate: moment
+          .utc(this.date)
+          .endOf("week")
+          .toDate()
+      };
+
+      this.$store.dispatch("getCodecHistory", data).then(response => {
+        this.history = response.data.history;
+      });
     }
   },
   mounted() {
-    const data = {
-      codecMacAddress: this.mac,
-      startDate: moment
-        .utc(this.date)
-        .startOf("week")
-        .toDate(),
-      endDate: moment
-        .utc(this.date)
-        .endOf("week")
-        .toDate()
-    };
-
-    this.$store.dispatch("getCodecHistory", data).then(response => {
-      this.history = response.data.history;
-    });
+    this.getCodecHistory();
   }
 };
 </script>

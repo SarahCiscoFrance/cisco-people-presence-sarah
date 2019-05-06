@@ -15,6 +15,7 @@ exports.createNewHistory = (codecMacAddress, date, name, value) => {
 };
 
 exports.getCodecHistory = (req, res) => {
+  console.log(req.body);
   historyModel
     .find({
       codecMacAddress: req.body.codecMacAddress,
