@@ -1,11 +1,18 @@
 <template>
-  <div class="container flex-grow direction-column" v-if="codec">
+  <div
+    class="container flex-grow direction-column"
+    v-if="codec"
+  >
     <div class="container">
       <div
         class="container-half codec-details"
         :class="[codec.peoplePresence === 'Yes' || codec.peopleCount > 0 ? 'codec-details-red' : 'codec-details-green']"
       >
         <h1>{{ codec.name }}</h1>
+        <h2>
+          <i class="fas fa-chair"></i>
+          {{ codec.chairs }}
+        </h2>
         <h2>
           <i
             class="fas"
