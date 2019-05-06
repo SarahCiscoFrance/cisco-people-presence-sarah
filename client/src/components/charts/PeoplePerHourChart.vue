@@ -1,9 +1,10 @@
 <script>
-import { Bar } from "vue-chartjs";
+import { Line } from "vue-chartjs";
+import chartjsPluginAnnotation from "chartjs-plugin-annotation";
 import moment from "moment";
 
 export default {
-  extends: Bar,
+  extends: Line,
   props: ["peopleCountDayHistory"],
   data: () => ({
     chartdata: {
@@ -13,7 +14,10 @@ export default {
           {
             label: "People Count",
             backgroundColor: "#00AD0B",
-            data: []
+            borderColor: "#00AD0B",
+            data: [],
+            fill: false,
+            pointRadius: 5
           }
         ]
       }
@@ -33,7 +37,29 @@ export default {
       },
       animation: {
         duration: 0
+      },
+      scales: {
+        yAxes: [
+          {
+            ticks: {
+              stepSize: 1
+            }
+          }
+        ]
       }
+      /* annotation: {
+        drawTime: "afterDatasetsDraw",
+        annotations: [
+          {
+            type: "line",
+            mode: "horizontal",
+            scaleID: "y-axis-0",
+            value: "8",
+            borderColor: "tomato",
+            borderWidth: 3
+          }
+        ]
+      } */
     }
   }),
   watch: {

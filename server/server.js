@@ -17,9 +17,9 @@ server.listen(port, () => {
 
   ciscoHttpFeedback.registerHttpFeedback();
 
-  /* setInterval(() => {
+  setInterval(() => {
     ciscoHttpFeedback.registerHttpFeedback();
-  }, process.env.INTERVAL_HTTP_FEEDBACK); */
+  }, process.env.INTERVAL_HTTP_FEEDBACK);
 });
 
 io.listen(server);
