@@ -6,7 +6,7 @@
       </router-link>
       <p class="header-description">
         Cisco Video Conferencing endpoints support advanced analytics capabilties
-        <br>(including face & audio detection technologies), allowing a fine tracking and optimization of meeting room usage across a building.
+        <br />(including face & audio detection technologies), allowing a fine tracking and optimization of meeting room usage across a building.
       </p>
     </header>
     <div class="content">
