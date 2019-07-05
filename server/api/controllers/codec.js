@@ -77,17 +77,17 @@ const updateCodec = (codec, req, res, io) => {
   let name, value;
 
   if (roomAnalytics.PeopleCount) {
-    codec.peopleCount = roomAnalytics.PeopleCount.Current.Value;
+    codec.peopleCount = roomAnalytics.PeopleCount.Current;
 
     name = "PeopleCount";
     value = codec.peopleCount;
   } else if (roomAnalytics.PeoplePresence) {
-    codec.peoplePresence = roomAnalytics.PeoplePresence.Value;
+    codec.peoplePresence = roomAnalytics.PeoplePresence;
 
     name = "PeoplePresence";
     value = codec.peoplePresence;
   } else if (roomAnalytics.AmbientNoise) {
-    codec.ambientNoise = roomAnalytics.AmbientNoise.Level.dBA.Value;
+    codec.ambientNoise = roomAnalytics.AmbientNoise.Level.dBA;
 
     name = "AmbientNoise";
     value = codec.ambientNoise;

@@ -35,9 +35,7 @@ export default {
         fontFamily:
           '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif'
       },
-      animation: {
-        duration: 0
-      },
+      animation: {},
       scales: {
         yAxes: [
           {
@@ -105,9 +103,6 @@ export default {
 
       this.renderChart(this.chartdata.datacollection, this.options);
     }
-  },
-  mounted() {
-    this.render();
   }
 };
 </script>

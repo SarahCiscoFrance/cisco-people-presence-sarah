@@ -52,9 +52,7 @@ export default {
           }
         }
       },
-      animation: {
-        duration: 0
-      }
+      animation: {}
     }
   }),
   watch: {
@@ -94,9 +92,6 @@ export default {
 
       this.renderChart(this.chartdata.datacollection, this.options);
     }
-  },
-  mounted() {
-    this.render();
   }
 };
 </script>

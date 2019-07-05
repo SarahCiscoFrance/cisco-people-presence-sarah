@@ -1,5 +1,8 @@
 <template>
-  <div class="container flex-grow direction-column" v-if="codec">
+  <div
+    class="container flex-grow direction-column"
+    v-if="codec"
+  >
     <div class="container">
       <div
         class="container-half codec-details"
@@ -138,8 +141,11 @@ export default {
           .toDate()
       };
 
+      console.log("Loading ..");
+
       this.$store.dispatch("getCodecHistory", data).then(response => {
         this.history = response.data.history;
+        console.log("Finished !");
       });
     }
   },
