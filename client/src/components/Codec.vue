@@ -1,7 +1,16 @@
 <template>
-  <div class="container flex-grow direction-column position-relative" v-if="codec">
-    <transition name="fade" appear>
-      <div v-if="loading" class="loading-bg">
+  <div
+    class="container flex-grow direction-column position-relative"
+    v-if="codec"
+  >
+    <transition
+      name="fade"
+      appear
+    >
+      <div
+        v-if="loading"
+        class="loading-bg"
+      >
         <svg
           class="logo"
           x="0px"
@@ -11,9 +20,7 @@
           viewBox="-305 291.9 200.1 105.4"
         >
           <g class="logo__mark">
-            <path
-              d="M-296.2,324.6c0-2.4-2-4.3-4.4-4.3s-4.4,1.9-4.4,4.3v9.1c0,2.4,2,4.4,4.4,4.4s4.4-1.9,4.4-4.4V324.6z"
-            />
+            <path d="M-296.2,324.6c0-2.4-2-4.3-4.4-4.3s-4.4,1.9-4.4,4.3v9.1c0,2.4,2,4.4,4.4,4.4s4.4-1.9,4.4-4.4V324.6z" />
             <path
               transform="translate(97.7633,748.5409)"
               d="M-370.1-435.9c0-2.4-2-4.3-4.4-4.3c-2.4,0-4.4,1.9-4.4,4.3v21.1c0,2.4,2,4.3,4.4,4.3c2.4,0,4.4-1.9,4.4-4.3V-435.9z"
@@ -94,6 +101,10 @@
         <h2>
           <i class="fas fa-volume-up"></i>
           {{ codec.ambientNoise }} dBA
+        </h2>
+        <h2>
+          <i class="fas fa-assistive-listening-systems"></i>
+          {{ codec.drynessScore }}
         </h2>
       </div>
       <div class="container-half default-bg date-container">
@@ -193,9 +204,12 @@ export default {
   },
   methods: {
     daySelected(date) {
-      this.date = date;
-
-      this.getCodecHistory();
+      if (moment(date).isSame(this.date, "week")) {
+        this.date = date;
+      } else {
+        this.date = date;
+        this.getCodecHistory();
+      }
     },
     getCodecHistory() {
       const data = {
@@ -216,7 +230,7 @@ export default {
         this.history = response.data.history;
         setTimeout(() => {
           this.loading = false;
-        }, 2000);
+        }, 3000);
       });
     }
   },

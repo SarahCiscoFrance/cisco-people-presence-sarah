@@ -87,10 +87,18 @@ const updateCodec = (codec, req, res, io) => {
     name = "PeoplePresence";
     value = codec.peoplePresence;
   } else if (roomAnalytics.AmbientNoise) {
-    codec.ambientNoise = roomAnalytics.AmbientNoise.Level.dBA;
+    codec.ambientNoise = roomAnalytics.AmbientNoise.Level.A; //dBA;
 
     name = "AmbientNoise";
     value = codec.ambientNoise;
+  } else if (roomAnalytics.Sound) {
+    codec.drynessScore = roomAnalytics.Sound.Level.A;
+    //ANCIEN
+    // else if (roomAnalytics.Acoustics) {
+    //   codec.drynessScore = roomAnalytics.Acoustics.DrynessScore;
+
+    name = "DrynessScore";
+    value = codec.drynessScore;
   }
 
   codecModel
@@ -100,7 +108,8 @@ const updateCodec = (codec, req, res, io) => {
         $set: {
           peoplePresence: codec.peoplePresence,
           peopleCount: codec.peopleCount,
-          ambientNoise: codec.ambientNoise
+          ambientNoise: codec.ambientNoise,
+          drynessScore: codec.drynessScore
         }
       }
     )

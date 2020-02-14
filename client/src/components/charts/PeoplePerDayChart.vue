@@ -34,7 +34,7 @@ export default {
       },
       title: {
         display: true,
-        text: "The number of people per day",
+        text: "The maximum number of people per day",
         fontSize: 16,
         fontFamily:
           '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif'
@@ -77,11 +77,11 @@ export default {
             const currentValueForDay = this.chartdata.datacollection.datasets[0]
               .data[day];
 
-            if (currentValueForDay) {
+            if (!currentValueForDay) {
               this.chartdata.datacollection.datasets[0].data[
                 day
-              ] += elementValue;
-            } else {
+              ] = elementValue;
+            } else if (currentValueForDay < elementValue) {
               this.chartdata.datacollection.datasets[0].data[
                 day
               ] = elementValue;

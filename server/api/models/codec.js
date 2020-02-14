@@ -32,6 +32,10 @@ const codecSchema = mongoose.Schema({
   ambientNoise: {
     type: Number,
     default: 0
+  },
+  drynessScore: {
+    type: Number,
+    default: 0
   }
 });
 
