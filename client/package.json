@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "chart.js": "^2.8.0",
+    "chart.js": "^2.9.4",
     "chartjs-plugin-annotation": "^0.5.7",
     "express": "^4.16.4",
     "moment": "^2.24.0",
