@@ -17,6 +17,11 @@ const historySchema = mongoose.Schema({
   date: {
     type: Date,
     required: true
+  },
+  createdAt: {
+    type: Date,
+    expires: "15d", //the record will be deleted after 15 days
+    default: Date.now
   }
 });
 

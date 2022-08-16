@@ -5,7 +5,7 @@ import moment from "moment";
 
 export default {
   extends: Bar,
-  props: ["peopleCountDayHistory", "bookingDayHistory"],
+  props: ["temperatureDayHistory", "humidityDayHistory"],
   data: () => ({
     chartdata: {
       datacollection: {
@@ -13,19 +13,30 @@ export default {
         datasets: [
           {
             type: "line",
-            label: "People Count",
-            backgroundColor: "#00AD0B",
-            borderColor: "#00AD0B",
+            label: "Temperature",
+            yAxisID: "temperature",
+            backgroundColor: [
+              "rgba(255, 99, 132, 0.2)",
+              "rgba(54, 162, 235, 0.2)",
+              "rgba(255, 206, 86, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(153, 102, 255, 0.2)",
+              "rgba(255, 159, 64, 0.2)"
+            ],
+            borderColor: "#f5473e",
             data: [],
-            fill: false,
+            fill: true,
             pointRadius: 5
           },
           {
             type: "bar",
-            label: "Booked",
-            backgroundColor: "#ec9007",
-            borderColor: "#ec9007",
-            data: []
+            label: "Humidity",
+            yAxisID: "humidity",
+            backgroundColor: "#3e83f5",
+            borderColor: "#3e83f5",
+            data: [],
+            fill: false,
+            pointRadius: 5
           }
         ]
       }
@@ -38,7 +49,7 @@ export default {
       },
       title: {
         display: true,
-        text: "Max number of people per hour",
+        text: "Outdoor Temperature (°C) & Humidity (%) per hour",
         fontSize: 16,
         fontFamily:
           '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif'
@@ -47,35 +58,41 @@ export default {
       scales: {
         yAxes: [
           {
+            id: "temperature",
+            position: "left",
             ticks: {
-              stepSize: 1
+              stepSize: 5,
+              fontColor: "#f5473e"
+            }
+          },
+          {
+            type: "linear",
+            id: "humidity",
+            position: "right",
+            gridLines: {
+              display: false
+            },
+            ticks: {
+              min: 0,
+              max: 100,
+              stepSize: 10,
+              fontColor: "#3e83f5"
             }
           }
         ]
       }
-      /* annotation: {
-        drawTime: "afterDatasetsDraw",
-        annotations: [
-          {
-            type: "line",
-            mode: "horizontal",
-            scaleID: "y-axis-0",
-            value: "8",
-            borderColor: "tomato",
-            borderWidth: 3
-          }
-        ]
-      } */
     }
   }),
   watch: {
-    peopleCountDayHistory(val) {
+    temperatureDayHistory(val) {
       this.render();
     },
-
-    bookingDayHistory(val) {
+    humidityDayHistory(val) {
       this.render();
     }
+  },
+  mounted() {
+    this.render();
   },
   methods: {
     render() {
@@ -83,14 +100,14 @@ export default {
       this.chartdata.datacollection.datasets[0].data = [];
       this.chartdata.datacollection.datasets[1].data = [];
 
-      if (this.peopleCountDayHistory.length > 0) {
+      if (this.temperatureDayHistory.length > 0) {
         for (let i = 0; i < 24; ++i) {
           this.chartdata.datacollection.labels.push(`${i}h`);
           this.chartdata.datacollection.datasets[0].data.push(0);
           this.chartdata.datacollection.datasets[1].data.push(0);
         }
 
-        this.peopleCountDayHistory.map(element => {
+        this.temperatureDayHistory.map(element => {
           const hour = moment(element.date)
             .startOf("hour")
             .hour();
@@ -115,18 +132,32 @@ export default {
         });
       }
 
-      if (this.bookingDayHistory.length > 0) {
-        this.bookingDayHistory.map(element => {
+      if (this.humidityDayHistory.length > 0) {
+        this.humidityDayHistory.map(element => {
           const hour = moment(element.date)
             .startOf("hour")
             .hour();
           const elementValue = element.value;
 
-          if (elementValue == true) {
-            this.chartdata.datacollection.datasets[1].data[hour] = 1;
+          if (elementValue >= 0) {
+            const currentValueForHour = this.chartdata.datacollection
+              .datasets[1].data[hour];
+
+            if (currentValueForHour) {
+              if (currentValueForHour < elementValue) {
+                this.chartdata.datacollection.datasets[1].data[
+                  hour
+                ] = elementValue;
+              }
+            } else {
+              this.chartdata.datacollection.datasets[1].data[
+                hour
+              ] = elementValue;
+            }
           }
         });
       }
+
       this.renderChart(this.chartdata.datacollection, this.options);
     }
   }

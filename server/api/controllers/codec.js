@@ -66,7 +66,10 @@ const createCodec = (req, res, io) => {
 };
 
 const updateCodec = (codec, req, res, io) => {
+  console.log(req.body.Status);
   const roomAnalytics = req.body.Status.RoomAnalytics;
+  const PeripheralsRoomAnalytics = req.body.Status.PeripheralsRoomAnalytics;
+  const bookings = req.body.Status.Bookings;
 
   if (roomAnalytics === undefined) {
     console.log(req.body);
@@ -101,6 +104,50 @@ const updateCodec = (codec, req, res, io) => {
     value = codec.drynessScore;
   }
 
+  let extra_data = []; //for new analytics from room Navigators to be in histories collection
+
+  if (
+    PeripheralsRoomAnalytics != undefined &&
+    PeripheralsRoomAnalytics.length > 0
+  ) {
+    codec.navigators = PeripheralsRoomAnalytics;
+    PeripheralsRoomAnalytics.forEach(element => {
+      if (element.Type == "TouchPanel") {
+        extra_data.push({
+          name: "AmbianteTemperature",
+          value: element.RoomAnalytics.AmbientTemperature
+        });
+
+        extra_data.push({
+          name: "RelativeHumidity",
+          value: element.RoomAnalytics.RelativeHumidity
+        });
+      } else if (element.Type == "RoomScheduler") {
+        extra_data.push({
+          name: "AmbianteTemperatureOutdoor",
+          value: element.RoomAnalytics.AmbientTemperature
+        });
+
+        extra_data.push({
+          name: "RelativeHumidityOutdoor",
+          value: element.RoomAnalytics.RelativeHumidity
+        });
+      }
+    });
+  } else {
+    codec.navigators = [];
+  }
+
+  if (bookings != undefined && bookings.length > 0) {
+    codec.bookings = bookings;
+    extra_data.push({
+      name: "IsBooked",
+      value: true
+    });
+  } else {
+    codec.bookings = [];
+  }
+
   codecModel
     .findOneAndUpdate(
       { macAddress: codec.macAddress },
@@ -109,7 +156,9 @@ const updateCodec = (codec, req, res, io) => {
           peoplePresence: codec.peoplePresence,
           peopleCount: codec.peopleCount,
           ambientNoise: codec.ambientNoise,
-          drynessScore: codec.drynessScore
+          drynessScore: codec.drynessScore,
+          navigators: codec.navigators,
+          bookings: codec.bookings
         }
       }
     )
@@ -122,6 +171,10 @@ const updateCodec = (codec, req, res, io) => {
       io.sockets.emit("newAnalytic", codec);
 
       createHistory(codec.macAddress, name, value);
+
+      extra_data.forEach(d => {
+        createHistory(codec.macAddress, d.name, d.value);
+      });
     })
     .catch(err => sendError(err, res));
 };

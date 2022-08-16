@@ -21,6 +21,7 @@ exports.getCodecHistory = (req, res) => {
       codecMacAddress: req.body.codecMacAddress,
       date: { $gte: req.body.startDate, $lt: req.body.endDate }
     })
+    //.limit(100) //ajout Rudy pour limiter le nombre d'enregistrement retourner
     .exec()
     .then(data => {
       res.status(200).json({
@@ -36,4 +37,8 @@ const sendError = (err, res) => {
   res.status(500).json({
     error: err
   });
+};
+
+exports.ping = (req, res) => {
+  res.send("OK");
 };

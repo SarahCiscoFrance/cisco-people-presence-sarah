@@ -80,53 +80,116 @@
     <div class="container">
       <div
         class="container-half codec-details"
-        :class="[codec.peoplePresence === 'Yes' || codec.peopleCount > 0 ? 'codec-details-red' : 'codec-details-green']"
+        :class="[(codec.peoplePresence === 'Yes' || codec.peopleCount > 0 ? 'codec-details-red' : 'codec-details-green'),(codec.peopleCount <=0 && codec.bookings.length > 0 ? 'codec-details-orange':'')]"
       >
-        <h1>{{ codec.name }}</h1>
-        <h2>
-          <i class="fas fa-chair"></i>
-          {{ codec.chairs }}
-        </h2>
-        <h2>
-          <i
-            class="fas"
-            :class="[codec.peoplePresence === 'Yes' || codec.peopleCount > 0 ? 'fa-door-closed' : 'fa-door-open']"
-          ></i>
-          {{ codec.peoplePresence === 'Yes' || codec.peopleCount > 0 ? "Busy" : "Free" }}
-        </h2>
-        <h2>
-          <i class="fas fa-users"></i>
-          {{ codec.peopleCount > 0 ? codec.peopleCount : 0 }}
-        </h2>
-        <h2>
-          <i class="fas fa-volume-up"></i>
-          {{ codec.ambientNoise }} dBA
-        </h2>
-        <h2>
-          <i class="fas fa-assistive-listening-systems"></i>
-          {{ codec.drynessScore }}
-        </h2>
+        <div class="right-corner"><span class="blink"><i class="far fa-dot-circle"></i></span>&nbsp;LIVE</div>
+        <div style="width: 50%;">
+          <h1>{{ codec.name }}</h1>
+          <h3
+            v-if="codec.bookings.length > 0"
+            style="border-top-left-radius: 10px;border-bottom-left-radius: 10px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;"
+          >
+            <i class="fas fa-map-marker-alt"></i>
+            booked until
+            {{ codec.bookings[0].endTime }}
+          </h3>
+          <div
+            class="subContainer"
+            style="display: flex;justify-content: space-between;"
+          >
+            <h3 style="border-top-left-radius: 10px;border-bottom-left-radius: 10px;">
+              <i class="fas fa-chair"></i>
+              {{ codec.chairs }}
+            </h3>
+            <h3>
+              <i
+                class="fas"
+                :class="[codec.peoplePresence === 'Yes' || codec.peopleCount > 0 ? 'fa-door-closed' : 'fa-door-open']"
+              ></i>
+              {{ codec.peoplePresence === 'Yes' || codec.peopleCount > 0 ? "Busy" : "Free" }}
+            </h3>
+            <h3>
+              <i class="fas fa-users"></i>
+              {{ codec.peopleCount > 0 ? codec.peopleCount : 0 }}
+            </h3>
+            <h3>
+              <i class="fas fa-volume-up"></i>
+              {{ codec.ambientNoise }}
+            </h3>
+            <h3 style="border-top-right-radius: 10px;border-bottom-right-radius: 10px;">
+              <i class="fas fa-assistive-listening-systems"></i>
+              {{ codec.drynessScore }}
+            </h3>
+          </div>
+        </div>
+        <div
+          v-if="codec.navigators.length > 0"
+          style="display:flex; justify-content: center; width: 50%;"
+        >
+          <div
+            style="text-align:center;margin-right: 5%;margin-left: 5%; width: 25%;"
+            v-for="navigator in codec.navigators"
+            :key="navigator.ID"
+          >
+            <h2>{{ navigator.Type === "TouchPanel" ? "Indoor" : "Outdoor"}}</h2>
+            <h3 style="border-top-left-radius: 10px;border-top-right-radius: 10px;">
+              <i class="fas fa-temperature-high"></i>
+              {{ navigator.RoomAnalytics.AmbientTemperature }}°C
+            </h3>
+            <h3>
+              <i class="fas fa-tint"></i>
+              {{ navigator.RoomAnalytics.RelativeHumidity }}%
+            </h3>
+            <h3 style="border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
+              <i class="fas fa-wind"></i>
+              {{ navigator.RoomAnalytics.AirQuality.Index }}
+            </h3>
+          </div>
+        </div>
       </div>
       <div class="container-half default-bg date-container">
-        <h1>Click on the input to choose a date for the graphs</h1>
-        <datepicker
-          class="date-picker"
-          :input-class="inputDatePickerStyle"
-          :calendar-class="calendarDatePickerStyle"
-          :value="date"
-          :format="formatDate"
-          @selected="daySelected"
-        ></datepicker>
+        <h1 style="text-align: end;margin-right: 4%;"><a href="/"><i class="far fa-arrow-alt-circle-left"></i> Return to Map</a></h1>
+        <div style="display: flex;
+    justify-content: space-around;">
+          <h1>Click on the input to choose a date for the graphs</h1>
+          <datepicker
+            class="date-picker"
+            :input-class="inputDatePickerStyle"
+            :calendar-class="calendarDatePickerStyle"
+            :value="date"
+            :format="formatDate"
+            @selected="daySelected"
+          ></datepicker>
+        </div>
       </div>
     </div>
     <div class="container flex-grow">
-      <div class="container-half">
+      <div class="container-half-left">
+        <p class="chart-per-hour-title">{{getTitleDate()}}</p>
         <div class="subcontainer chart-container default-bg flex-grow">
           <people-per-hour-chart
-            :styles="chartStyle"
+            :styles="chartStyle2"
             :peopleCountDayHistory="peopleCountDayHistory"
+            :bookingDayHistory="bookingDayHistory"
           />
         </div>
+        <div class="subcontainer chart-container default-bg flex-grow">
+          <!--<temperature-per-hour-chart
+            :styles="chartStyle2"
+            :temperatureDayHistory="temperatureDayHistory"
+            :humidityDayHistory="humidityDayHistory"
+          />-->
+          <select v-model="type">
+            <option value="temperature-per-hour-chart">Indoor</option>
+            <option value="temperature-per-hour-chart-out">Outdoor</option>
+          </select>
+          <component
+            :is="type"
+            v-bind:styles="chartStyle2"
+            v-bind="{temperatureDayHistory : temperatureDayHistory, humidityDayHistory:humidityDayHistory}"
+          />
+        </div>
+
       </div>
       <div class="container-half">
         <div class="subcontainer chart-container default-bg flex-grow">
@@ -142,6 +205,8 @@
 
 <script>
 import PeoplePerHourChart from "./charts/PeoplePerHourChart";
+import TemperaturePerHourChart from "./charts/TemperaturePerHourChart";
+import TemperaturePerHourChartOut from "./charts/TemperaturePerHourChartOut";
 import PeoplePerDayChart from "./charts/PeoplePerDayChart";
 import Datepicker from "vuejs-datepicker";
 import moment from "moment";
@@ -150,9 +215,14 @@ import { setTimeout } from "timers";
 export default {
   data() {
     return {
+      type: "temperature-per-hour-chart",
       loading: false,
       chartStyle: {
         height: "100%",
+        position: "relative"
+      },
+      chartStyle2: {
+        height: "85%",
         position: "relative"
       },
       inputDatePickerStyle: ["date-picker-input"],
@@ -166,6 +236,8 @@ export default {
   },
   components: {
     PeoplePerHourChart,
+    TemperaturePerHourChart,
+    TemperaturePerHourChartOut,
     PeoplePerDayChart,
     Datepicker
   },
@@ -174,6 +246,71 @@ export default {
   computed: {
     codec() {
       return this.$store.getters.codec(this.mac);
+    },
+    temperatureDayHistory() {
+      if (this.history.length > 0) {
+        if (this.type === "temperature-per-hour-chart") {
+          return this.history.filter(element => {
+            const dateElementIsValid = moment(element.date).isSame(
+              this.date,
+              "day"
+            );
+            return element.name === "AmbianteTemperature" && dateElementIsValid;
+          });
+        } else {
+          // is the chart temperature-per-hour-chart-out
+          return this.history.filter(element => {
+            const dateElementIsValid = moment(element.date).isSame(
+              this.date,
+              "day"
+            );
+            return (
+              element.name === "AmbianteTemperatureOutdoor" &&
+              dateElementIsValid
+            );
+          });
+        }
+      } else {
+        return [];
+      }
+    },
+    bookingDayHistory() {
+      if (this.history.length > 0) {
+        return this.history.filter(element => {
+          const dateElementIsValid = moment(element.date).isSame(
+            this.date,
+            "day"
+          );
+          return element.name === "IsBooked" && dateElementIsValid;
+        });
+      } else {
+        return [];
+      }
+    },
+    humidityDayHistory() {
+      if (this.history.length > 0) {
+        if (this.type === "temperature-per-hour-chart") {
+          return this.history.filter(element => {
+            const dateElementIsValid = moment(element.date).isSame(
+              this.date,
+              "day"
+            );
+            return element.name === "RelativeHumidity" && dateElementIsValid;
+          });
+        } else {
+          return this.history.filter(element => {
+            const dateElementIsValid = moment(element.date).isSame(
+              this.date,
+              "day"
+            );
+            return (
+              element.name === "RelativeHumidityOutdoor" && dateElementIsValid
+            );
+          });
+        }
+      } else {
+        return [];
+      }
     },
     peopleCountDayHistory() {
       if (this.history.length > 0) {
@@ -230,8 +367,11 @@ export default {
         this.history = response.data.history;
         setTimeout(() => {
           this.loading = false;
-        }, 3000);
+        }, 500);
       });
+    },
+    getTitleDate() {
+      return moment(this.date).format("DD MMMM YYYY");
     }
   },
   mounted() {
@@ -257,10 +397,22 @@ export default {
   background-color: white;
 }
 
+.container-half-left {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 50%;
+
+  margin: 0.75rem;
+
+  padding: 0.75rem;
+
+  border-radius: 1rem;
+  background-color: white;
+}
+
 .codec-details {
   display: flex;
-  align-items: center;
-
+  flex-direction: row;
   justify-content: space-between;
 
   font-size: 1.4rem;
@@ -270,16 +422,80 @@ export default {
   transition: all 0.3s ease-in;
 }
 
+h3 {
+  /*text-align: center;
+  padding: 1%;
+  margin: 1%;
+  border: 1px solid white;
+  border-radius: 20px;*/
+  flex-basis: 100%;
+  text-align: center;
+  border: 1px solid white;
+}
+
+a {
+  color: inherit; /* blue colors for links too */
+  text-decoration: inherit; /* no underline */
+}
+
+a:hover {
+  color: #d8d8d5;
+}
+
+.right-corner {
+  display: flex;
+  align-items: baseline;
+  position: absolute;
+  top: 1%;
+  right: 51%;
+}
+
+.chart-per-hour-title {
+  color: rgb(102 102 102);
+  margin-left: 2%;
+  text-align: start;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+/**Blink animation */
+.blink {
+  animation: blink-animation 3s infinite;
+  -webkit-animation: blink-animation 3s infinite;
+}
+@keyframes blink-animation {
+  from {
+    color: white;
+    /*visibility: hidden;*/
+  }
+  to {
+    color: #f5473e;
+  }
+}
+@-webkit-keyframes blink-animation {
+  from {
+    color: white;
+    /*visibility: hidden;*/
+  }
+  to {
+    color: #f5473e;
+  }
+}
+/**end animation */
+
 .codec-details-red {
   background-color: #f5473e;
 
-  transform: scale(1.005);
+  /*transform: scale(1.005);*/
 
   box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.1);
 }
 
 .codec-details-green {
   background-color: #43a942;
+}
+
+.codec-details-orange {
+  background-color: #ec9007;
 }
 
 .subcontainer {
@@ -294,8 +510,9 @@ export default {
   background-repeat: no-repeat;
 
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
+  /*align-items: center;*/
 
   padding: 1.5rem 3rem;
 

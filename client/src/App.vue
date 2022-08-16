@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <header class="header">
+    <!--<header class="header">
       <router-link to="/" class="router-link">
         <h1>Cisco people presence</h1>
       </router-link>
@@ -8,9 +8,13 @@
         Cisco Video Conferencing endpoints support advanced analytics capabilties
         <br />(including face & audio detection technologies), allowing a fine tracking and optimization of meeting room usage across a building.
       </p>
-    </header>
+    </header>-->
     <div class="content">
-      <transition name="component-fade" mode="out-in" appear>
+      <transition
+        name="component-fade"
+        mode="out-in"
+        appear
+      >
         <router-view></router-view>
       </transition>
     </div>
@@ -108,15 +112,15 @@ body {
   background-color: #e8ebf1;
 
   padding: 0.75rem;
-  margin-top: 1.5rem;
+  /*margin-top: 1.5rem;*/
 
   border-radius: 1rem;
 }
 
 .content-description {
-  position: absolute;
-
-  background-image: linear-gradient(to right, #6cc04a, #abc233);
+  /*position: absolute;*/
+  margin: 5px;
+  background-image: linear-gradient(to right, #097dbc, #049fd9);
   background-size: cover;
   background-repeat: no-repeat;
   color: #ffffff;
@@ -125,6 +129,11 @@ body {
 
   padding: 1rem 2rem;
   border-radius: 10px;
+}
+
+.content-sub-description {
+  font-size: 1.5rem;
+  background-image: linear-gradient(to right, #6cc04a, #abc233);
 }
 
 .component-fade-enter-active,
