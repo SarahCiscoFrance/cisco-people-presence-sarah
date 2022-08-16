@@ -34,7 +34,7 @@ export default {
       },
       title: {
         display: true,
-        text: "The maximum number of people per day",
+        text: "", //le titre est set plus bas
         fontSize: 16,
         fontFamily:
           '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif'
@@ -89,7 +89,11 @@ export default {
           }
         });
       }
-
+      this.options.title.text =
+        "Max number of people per day for the week of " +
+        moment(this.$parent.date)
+          .startOf("week")
+          .format("DD/MM/YYYY");
       this.renderChart(this.chartdata.datacollection, this.options);
     }
   }

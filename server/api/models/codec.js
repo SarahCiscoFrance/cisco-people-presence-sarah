@@ -36,6 +36,13 @@ const codecSchema = mongoose.Schema({
   drynessScore: {
     type: Number,
     default: 0
+  },
+  navigators: {
+    type: Array,
+    default: 0
+  },
+  bookings: {
+    type: Array
   }
 });
 
